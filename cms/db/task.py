@@ -47,7 +47,7 @@ from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from cms import TOKEN_MODE_DISABLED, TOKEN_MODE_FINITE, TOKEN_MODE_INFINITE, \
     FEEDBACK_LEVEL_FULL, FEEDBACK_LEVEL_RESTRICTED
 from cmscommon.constants import \
-    SCORE_MODE_MAX, SCORE_MODE_MAX_SUBTASK, SCORE_MODE_MAX_TOKENED_LAST
+    SCORE_MODE_MAX, SCORE_MODE_MAX_SUBTASK, SCORE_MODE_MAX_TOKENED_LAST, SCORE_MODE_MAX_OTHER_USERS
 
 from . import Codename, Filename, FilenameSchemaArray, Digest, Base, Contest
 
@@ -220,9 +220,10 @@ class Task(Base):
         Enum(SCORE_MODE_MAX_TOKENED_LAST,
              SCORE_MODE_MAX,
              SCORE_MODE_MAX_SUBTASK,
+             SCORE_MODE_MAX_OTHER_USERS,
              name="score_mode"),
         nullable=False,
-        default=SCORE_MODE_MAX_TOKENED_LAST)
+        default=SCORE_MODE_MAX_SUBTASK)
 
     # Active Dataset (id and object) currently being used for scoring.
     # The ForeignKeyConstraint for this column is set at table-level.

@@ -25,13 +25,12 @@ from __future__ import unicode_literals
 from future.builtins.disabled import *  # noqa
 from future.builtins import *  # noqa
 from six import itervalues, iteritems
-from six.moves import zip_longest
 
 import heapq
 import logging
 
 from cmscommon.constants import \
-    SCORE_MODE_MAX, SCORE_MODE_MAX_SUBTASK, SCORE_MODE_MAX_TOKENED_LAST
+    SCORE_MODE_MAX, SCORE_MODE_MAX_SUBTASK, SCORE_MODE_MAX_TOKENED_LAST, SCORE_MODE_MAX_OTHER_USERS
 
 
 logger = logging.getLogger(__name__)
@@ -127,14 +126,26 @@ class Score(object):
                         [submission.score
                          for submission in itervalues(self._submissions)])
         elif self._score_mode == SCORE_MODE_MAX_SUBTASK:
-            scores_by_submission = (s.extra or []
-                                    for s in itervalues(self._submissions))
-            scores_by_subtask = zip_longest(*scores_by_submission,
-                                            fillvalue=0.0)
-            score = float(sum(max(s) for s in scores_by_subtask))
+            subtask_scores = None
+            for s in itervalues(self._submissions):
+                if s.extra is None:
+                    continue
+                print(s.extra)
+                if subtask_scores is None:
+                    subtask_scores = [float(score) for score in s.extra]
+                else:
+                    subtask_scores = [
+                        max(old, float(new))
+                        for old, new in zip(subtask_scores, s.extra)
+                    ]
+            score = 0.0 if subtask_scores is None else sum(subtask_scores)
         elif self._score_mode == SCORE_MODE_MAX_TOKENED_LAST:
             score = max(self._released.query(),
                         self._last.score if self._last is not None else 0.0)
+        elif self._score_mode == SCORE_MODE_MAX_OTHER_USERS:
+            score = max([0.0] +
+                        [submission.score
+                         for submission in itervalues(self._submissions)])
         else:
             raise ValueError("Unexpected score mode '%s'" % self._score_mode)
 

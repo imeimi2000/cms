@@ -46,7 +46,7 @@ from cms.grading import format_status_text
 from cms.grading.languagemanager import get_language
 from cms.locale import DEFAULT_TRANSLATION
 from cmscommon.constants import \
-    SCORE_MODE_MAX, SCORE_MODE_MAX_SUBTASK, SCORE_MODE_MAX_TOKENED_LAST
+    SCORE_MODE_MAX, SCORE_MODE_MAX_SUBTASK, SCORE_MODE_MAX_TOKENED_LAST, SCORE_MODE_MAX_OTHER_USERS
 
 
 @contextfilter
@@ -159,6 +159,7 @@ def instrument_generic_toolbox(env):
     env.globals["SCORE_MODE_MAX_TOKENED_LAST"] = SCORE_MODE_MAX_TOKENED_LAST
     env.globals["SCORE_MODE_MAX"] = SCORE_MODE_MAX
     env.globals["SCORE_MODE_MAX_SUBTASK"] = SCORE_MODE_MAX_SUBTASK
+    env.globals["SCORE_MODE_MAX_OTHER_USERS"] = SCORE_MODE_MAX_OTHER_USERS
 
     env.globals["TOKEN_MODE_DISABLED"] = TOKEN_MODE_DISABLED
     env.globals["TOKEN_MODE_FINITE"] = TOKEN_MODE_FINITE

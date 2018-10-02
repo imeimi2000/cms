@@ -29,7 +29,9 @@ from future.builtins import *  # noqa
 
 # Maximum score amongst all submissions.
 SCORE_MODE_MAX = "max"
-# Sum of maximum score for each subtask over all submissions.
+# Sum of maximum score for each subtask.
 SCORE_MODE_MAX_SUBTASK = "max_subtask"
 # Maximum score among all tokened submissions and the last submission.
 SCORE_MODE_MAX_TOKENED_LAST = "max_tokened_last"
+# Maximum score among all submissions be constant times of deviation.
+SCORE_MODE_MAX_OTHER_USERS = "max_other_user"

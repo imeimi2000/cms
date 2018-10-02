@@ -44,7 +44,7 @@ from cms.db import Contest, User, Task, Statement, Attachment, Team, Dataset, \
     Manager, Testcase
 from cms.grading.languagemanager import LANGUAGES, HEADER_EXTS
 from cmscommon.constants import \
-    SCORE_MODE_MAX, SCORE_MODE_MAX_SUBTASK, SCORE_MODE_MAX_TOKENED_LAST
+    SCORE_MODE_MAX, SCORE_MODE_MAX_SUBTASK, SCORE_MODE_MAX_TOKENED_LAST, SCORE_MODE_MAX_OTHER_USERS
 from cmscommon.crypto import build_password
 from cmscommon.datetime import make_datetime
 from cmscontrib import touch
@@ -393,6 +393,8 @@ class YamlLoader(ContestLoader, TaskLoader, UserLoader, TeamLoader):
             args["score_mode"] = SCORE_MODE_MAX_SUBTASK
         elif conf.get("score_mode", None) == SCORE_MODE_MAX_TOKENED_LAST:
             args["score_mode"] = SCORE_MODE_MAX_TOKENED_LAST
+        elif conf.get("score_mode", None) == SCORE_MODE_MAX_OTHER_USERS:
+            args["score_mode"] = SCORE_MODE_MAX_OTHER_USERS
 
         # Use the new token settings format if detected.
         if "token_mode" in conf:

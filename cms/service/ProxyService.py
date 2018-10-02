@@ -50,6 +50,8 @@ from cms import config
 from cms.io import Executor, QueueItem, TriggeredService, rpc_method
 from cms.db import SessionGen, Contest, Participation, Task, Submission, \
     get_submissions
+from cmscommon.constants import \
+    SCORE_MODE_MAX, SCORE_MODE_MAX_SUBTASK, SCORE_MODE_MAX_TOKENED_LAST, SCORE_MODE_MAX_OTHER_USERS
 from cmscommon.datetime import make_timestamp
 
 
@@ -289,6 +291,9 @@ class ProxyService(TriggeredService):
             for submission in submissions:
                 # The submission result can be None if the dataset has
                 # been just made live.
+                if submission.task.score_mode == SCORE_MODE_MAX_OTHER_USERS:
+                    continue
+
                 sr = submission.get_result()
                 if sr is None:
                     continue
@@ -354,6 +359,8 @@ class ProxyService(TriggeredService):
             tasks = dict()
 
             for task in contest.tasks:
+                if task.score_mode == SCORE_MODE_MAX_OTHER_USERS:
+                     continue
                 score_type = task.active_dataset.score_type_object
                 tasks[encode_id(task.name)] = {
                     "short_name": task.name,
@@ -379,6 +386,9 @@ class ProxyService(TriggeredService):
         queues for them to be sent to rankings.
 
         """
+        if submission.task.score_mode == SCORE_MODE_MAX_OTHER_USERS:
+            return [None, None]
+
         submission_result = submission.get_result()
 
         # Data to send to remote rankings.
@@ -416,6 +426,9 @@ class ProxyService(TriggeredService):
 
         """
         # Data to send to remote rankings.
+        if submission.task.score_mode == SCORE_MODE_MAX_OTHER_USERS:
+            return [None, None]
+
         submission_id = "%d" % submission.id
         submission_data = {
             "user": encode_id(submission.participation.user.username),
@@ -469,6 +482,12 @@ class ProxyService(TriggeredService):
                              "unexistent submission id %s.", submission_id)
                 raise KeyError("Submission not found.")
 
+            if submission.task.score_mode == SCORE_MODE_MAX_OTHER_USERS:
+                logger.info("[submission_scored] Score for submission %d "
+                            "not sent because of the task score mode",
+                            submission_id)
+                return
+
             if submission.participation.hidden:
                 logger.info("[submission_scored] Score for submission %d "
                             "not sent because the participation is hidden.",
@@ -504,6 +523,12 @@ class ProxyService(TriggeredService):
                              "unexistent submission id %s.", submission_id)
                 raise KeyError("Submission not found.")
 
+            if submission.task.score_mode == SCORE_MODE_MAX_OTHER_USERS:
+                logger.info("[submission_scored] Token for submission %d "
+                            "not sent because of the task score mode",
+                            submission_id)
+                return
+
             if submission.participation.hidden:
                 logger.info("[submission_tokened] Token for submission %d "
                             "not sent because participation is hidden.",
@@ -536,6 +561,9 @@ class ProxyService(TriggeredService):
         """
         with SessionGen() as session:
             task = Task.get_from_id(task_id, session)
+            if task.score_mode == SCORE_MODE_MAX_OTHER_USERS:
+                return
+
             dataset = task.active_dataset
 
             logger.info("Dataset update for task %d (dataset now is %d).",

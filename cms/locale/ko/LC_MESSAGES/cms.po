@@ -1007,6 +1007,15 @@ msgstr "총 점수"
 msgid "Score"
 msgstr "점수"
 
+msgid "Max Score"
+msgstr "최고 점수"
+
+msgid "Current Score"
+msgstr "현재 점수"
+
+msgid "Final Score"
+msgstr "최종 점수"
+
 msgid "Official"
 msgstr "공식"
 
