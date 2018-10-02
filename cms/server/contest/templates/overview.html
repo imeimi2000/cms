@@ -197,6 +197,8 @@
             <th>{% trans %}Memory limit{% endtrans %}</th>
             <th>{% trans %}Type{% endtrans %}</th>
             <th>{% trans %}Files{% endtrans %}</th>
+            <th>{% trans %}Current Score{% endtrans %}</th>
+            <th>{% trans %}Max Score{% endtrans %}</th>
 {% if tokens_contest != TOKEN_MODE_DISABLED and tokens_tasks != TOKEN_MODE_DISABLED %}
             <th>{% trans %}Tokens{% endtrans %}</th>
 {% endif %}
@@ -224,6 +226,8 @@
             </td>
             <td>{{ get_task_type(dataset=t_iter.active_dataset).name }}</td>
             <td>{{ t_iter.submission_format|map("replace", ".%l", extensions)|join(" ") }}</td>
+			<td>{{ round(task_score(participation=current_user, task=t_iter, public=True)[0], t_iter.score_precision) }}</td>
+			<td>{{ get_score_type(dataset=t_iter.active_dataset).max_public_score }}</td>
     {% if tokens_contest != TOKEN_MODE_DISABLED and tokens_tasks != TOKEN_MODE_DISABLED %}
             <td>
         {% if t_iter.token_mode == TOKEN_MODE_FINITE or t_iter.token_mode == TOKEN_MODE_INFINITE %}

@@ -44,6 +44,7 @@ import tornado.web
 from cms import config
 from cms.db import PrintJob
 from cms.grading.steps import COMPILATION_MESSAGES, EVALUATION_MESSAGES
+from cms.grading.scoring import task_score
 from cms.server import multi_contest
 from cms.server.contest.authentication import validate_login
 from cms.server.contest.communication import get_communications
@@ -70,7 +71,7 @@ class MainHandler(ContestHandler):
     """
     @multi_contest
     def get(self):
-        self.render("overview.html", **self.r_params)
+        self.render("overview.html", round=round, current_user=self.get_current_user(), task_score=task_score, **self.r_params)
 
 
 class LoginHandler(ContestHandler):

@@ -3,7 +3,7 @@
 
 # Contest Management System - http://cms-dev.github.io/
 # Copyright © 2010-2013 Giovanni Mascellani <mascellani@poisson.phc.unipi.it>
-# Copyright © 2010-2018 Stefano Maggiolo <s.maggiolo@gmail.com>
+# Copyright © 2010-2015 Stefano Maggiolo <s.maggiolo@gmail.com>
 # Copyright © 2010-2012 Matteo Boscariol <boscarim@hotmail.com>
 # Copyright © 2013-2017 Luca Wehrstedt <luca.wehrstedt@gmail.com>
 #
@@ -93,7 +93,6 @@ class RemoteServiceBase(object):
             connection (origin or target, depending on its direction).
 
         """
-        self._local_address = None
         self.remote_address = remote_address
         self._connection_event = gevent.event.Event()
 
@@ -161,13 +160,8 @@ class RemoteServiceBase(object):
         self._reader = self._socket.makefile('rb')
         self._writer = self._socket.makefile('wb')
         self._connection_event.set()
-        # IPv4 addresses have two elements (host and port), IPv6 ones
-        # have 4 elements (host, port, flowinfo and scopeid). We will
-        # discard the last two ones, losing information, to simplify.
-        self._local_address = "%s:%d" % self._socket.getsockname()[:2]
 
-        logger.info("Established connection with %s (local address: %s).",
-                    self._repr_remote(), self._local_address)
+        logger.info("Established connection with %s.", self._repr_remote())
 
         for handler in self._on_connect_handlers:
             gevent.spawn(handler, plus)
@@ -185,21 +179,18 @@ class RemoteServiceBase(object):
         if not self.connected:
             return
 
-        local_address = self._local_address
-
         self._socket = None
         self._reader = None
         self._writer = None
-        self._local_address = None
         self._connection_event.clear()
 
-        logger.info("Terminated connection with %s (local address: %s): %s",
-                    self._repr_remote(), local_address, reason)
+        logger.info("Terminated connection with %s: %s", self._repr_remote(),
+                    reason)
 
         for handler in self._on_disconnect_handlers:
             gevent.spawn(handler)
 
-    def disconnect(self, reason="Disconnection requested."):
+    def disconnect(self):
         """Gracefully close the connection.
 
         return (bool): True if the service was connected.
@@ -215,7 +206,7 @@ class RemoteServiceBase(object):
             logger.warning("Couldn't disconnect from %s: %s.",
                            self._repr_remote(), error)
         finally:
-            self.finalize(reason=reason)
+            self.finalize("Disconnection requested.")
         return True
 
     def _read(self):
@@ -248,14 +239,9 @@ class RemoteServiceBase(object):
                     self.finalize("Client misbehaving.")
                     raise IOError("Message too long.")
         except socket.error as error:
-            if self.connected:
-                logger.warning("Failed reading from socket: %s.", error)
-                self.finalize("Read failed.")
-                raise error
-            else:
-                # The client was terminated willingly; its correct termination
-                # is handled in disconnect(), so here we can just return.
-                return b""
+            logger.warning("Failed reading from socket: %s.", error)
+            self.finalize("Read failed.")
+            raise error
 
         return data
 
@@ -365,7 +351,6 @@ class RemoteServiceServer(RemoteServiceBase):
         try:
             message = json.loads(data.decode('utf-8'))
         except ValueError:
-            self.disconnect("Bad request received")
             logger.warning("Cannot parse incoming message, discarding.")
             return
 
@@ -382,8 +367,7 @@ class RemoteServiceServer(RemoteServiceBase):
         """
         # Validate the request.
         if not {"__id", "__method", "__data"}.issubset(iterkeys(request)):
-            self.disconnect("Bad request received")
-            logger.warning("Request is missing some fields, ignoring.")
+            logger.warning("Request is missing some fields, ingoring.")
             return
 
         # Determine the ID.
@@ -518,9 +502,9 @@ class RemoteServiceClient(RemoteServiceBase):
             raise RuntimeError("Already (auto-re)connecting")
         self._loop = gevent.spawn(self._run)
 
-    def disconnect(self, reason="Disconnection requested."):
+    def disconnect(self):
         """See RemoteServiceBase.disconnect."""
-        if super(RemoteServiceClient, self).disconnect(reason=reason):
+        if super(RemoteServiceClient, self).disconnect():
             self._loop.kill()
             self._loop = None
 
@@ -558,7 +542,6 @@ class RemoteServiceClient(RemoteServiceBase):
         try:
             message = json.loads(data.decode('utf-8'))
         except ValueError:
-            self.disconnect("Bad response received")
             logger.warning("Cannot parse incoming message, discarding.")
             return
 
@@ -575,8 +558,7 @@ class RemoteServiceClient(RemoteServiceBase):
         """
         # Validate the response.
         if not {"__id", "__data", "__error"}.issubset(iterkeys(response)):
-            self.disconnect("Bad response received")
-            logger.warning("Response is missing some fields, ignoring.")
+            logger.warning("Response is missing some fields, ingoring.")
             return
 
         # Determine the ID.
