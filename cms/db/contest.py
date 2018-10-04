@@ -87,7 +87,7 @@ class Contest(Base):
     languages = Column(
         ARRAY(String),
         nullable=False,
-        default=["C11 / gcc", "C++11 / g++", "Pascal / fpc"])
+        default=["C11 / gcc", "C++14 / g++"])
 
     # Whether contestants allowed to download their submissions.
     submissions_download_allowed = Column(
@@ -150,7 +150,7 @@ class Contest(Base):
         Enum(TOKEN_MODE_DISABLED, TOKEN_MODE_FINITE, TOKEN_MODE_INFINITE,
              name="token_mode"),
         nullable=False,
-        default=TOKEN_MODE_INFINITE)
+        default=TOKEN_MODE_DISABLED)
 
     # The maximum number of tokens a contestant is allowed to use
     # during the whole contest (on all tasks).
