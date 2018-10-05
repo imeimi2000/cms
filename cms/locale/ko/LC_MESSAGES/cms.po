@@ -953,6 +953,9 @@ msgstr ""
 msgid "Attachments"
 msgstr "첨부 자료"
 
+msgid "Spoilers"
+msgstr "스포일러"
+
 #, python-format
 msgid "%(name)s (%(short_name)s) <small>submissions</small>"
 msgstr "%(name)s (%(short_name)s) <small>제출 파일</small>"
@@ -1015,6 +1018,9 @@ msgstr "현재 점수"
 
 msgid "Final Score"
 msgstr "최종 점수"
+
+msgid "Tokened Score"
+msgstr "토큰 점수"
 
 msgid "Official"
 msgstr "공식"
