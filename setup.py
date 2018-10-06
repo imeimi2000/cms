@@ -196,6 +196,7 @@ setup(
             "C++20 / g++=cms.grading.languages.cpp20_gpp:Cpp20Gpp",
             "D / DMD=cms.grading.languages.d_dmd:DDMD",
             "C11 / gcc=cms.grading.languages.c11_gcc:C11Gcc",
+            "Text / cat=cms.grading.languages.text_cat:TextCat",
             "C# / Mono=cms.grading.languages.csharp_mono:CSharpMono",
             "Haskell / ghc=cms.grading.languages.haskell_ghc:HaskellGhc",
             "Java 1.4 / gcj=cms.grading.languages.java14_gcj:Java14Gcj",
