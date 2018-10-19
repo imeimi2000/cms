@@ -113,6 +113,12 @@ class Contest(Base):
         nullable=False,
         default=False)
 
+    # Whether to allow people to sign up for the contest via the web interface
+    allow_signup = Column(
+        Boolean,
+        nullable=False,
+        default=False)
+
     # Whether to allow username/password authentication
     allow_password_authentication = Column(
         Boolean,

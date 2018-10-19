@@ -86,6 +86,14 @@ $(document).ready(function () {
             </div>
         </div>
     {% endif %}
+    {% if handler.get_argument("signup_successful", "") != "" %}
+        <div id="notifications" class="notifications">
+            <div class="alert alert-block alert-success notification">
+                <a class="close" data-dismiss="alert" href="#">&#xD7;</a>
+                <h4 class="alert-heading">{% trans %}Registration successful.{% endtrans %}</h4>
+            </div>
+        </div>
+    {% endif %}
         <div class="login_container">
             <div class="login_box hero-unit">
                 <h1>{% trans %}Welcome{% endtrans %}</h1>
@@ -117,6 +125,9 @@ $(document).ready(function () {
                         </div>
                     </fieldset>
                 </form>
+                {% if contest.allow_signup %}
+                <a href="{{ contest_url("signup") }}">{% trans %}Sign up{% endtrans %}</a>
+                {% endif %}
             </div>
         </div>
 {% else %}

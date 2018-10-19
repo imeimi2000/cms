@@ -1065,5 +1065,36 @@ msgstr "테스트 세부 사항"
 msgid "Evaluation outcome"
 msgstr "실행 결과"
 
+#, python-format
+msgid "Sign up for %(contest_name)s"
+msgstr "%(contest_name)s 계정 생성"
+
+msgid "Passwords do not match"
+msgstr "비밀번호가 일치하지 않습니다"
+
+msgid "A user with that username already exists"
+msgstr "이미 존재하는 아이디입니다"
+
+msgid "Sign up"
+msgstr "계정 생성"
+
+msgid "Please enter your data"
+msgstr "계정 정보를 입력하십시오"
+
+msgid "First Name"
+msgstr "이름"
+
+msgid "Last Name"
+msgstr "성"
+
+msgid "Email"
+msgstr "이메일 주소"
+
+msgid "Confirm password"
+msgstr "비밀번호 확인"
+
+msgid "Register"
+msgstr "가입"
+
 #~ msgid "All sources must be in the same language."
 #~ msgstr "모든 소스들은 동일한 프로그래밍 언어를 사용하여야 합니다."

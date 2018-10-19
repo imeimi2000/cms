@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% trans contest_name=contest.description %}Sign up for {{ contest.description }}{% endtrans %}
+{% endblock title %}
+
+{% block js %}
+
+
+    <script>
+
+var utils = new CMS.CWSUtils("{{ url() }}", "{{ contest_url() }}", "{{ contest.name }}",
+                             0, 0, 0, 0, 0);
+
+{% block additional_js %}{% endblock additional_js %}
+    </script>
+{% endblock js %}
+
+{% block body %}
+        <div id="navigation_bar" class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="{{ contest_url() }}">{{ contest.description }}</a>
+{% if available_translations|length > 1 %}
+                    <p class="navbar-text pull-right">
+                        <select id="lang" class="form-control btn btn-info" onchange="utils.switch_lang()">
+                            <option value=""{% if cookie_translation is none %} selected{% endif %}>{% trans lang=automatic_translation.name %}Automatic ({{ lang }}){% endtrans %}</option>
+                        {% for lang_code, t in available_translations|dictsort(by="key") %}
+                            <option value="{{ lang_code }}"{% if t == cookie_translation %} selected{% endif %}>{{ t.name }}</option>
+                        {% endfor %}
+                        </select>
+                    </p>
+{% endif %}
+                </div>
+            </div>
+        </div>
+
+{% if handler.get_argument("password_no_match", "") != "" %}
+        <div id="notifications" class="notifications">
+            <div class="alert alert-block alert-error notification">
+                <a class="close" data-dismiss="alert" href="#">&#xD7;</a>
+                <h4 class="alert-heading">{% trans %}Passwords do not match{% endtrans %}</h4>
+            </div>
+        </div>
+{% endif %}
+
+{% if handler.get_argument("user_exists", "") != "" %}
+        <div id="notifications" class="notifications">
+            <div class="alert alert-block alert-error notification">
+                <a class="close" data-dismiss="alert" href="#">&#xD7;</a>
+                <h4 class="alert-heading">{% trans %}A user with that username already exists{% endtrans %}</h4>
+            </div>
+        </div>
+{% endif %}
+
+<div class="login_container">
+  <div class="login_box hero-unit">
+    <h1>{% trans %}Sign up{% endtrans %}</h1>
+    <p>{% trans %}Please enter your data{% endtrans %}</p>
+    <form class="form-horizontal" action="{{ contest_url("register") }}" method="POST">
+      {{ xsrf_form_html|safe }}
+      <input type="hidden" name="next" value="{{ handler.get_argument("next", "/signup_successful=true") }}">
+      <fieldset>
+        <div class="control-group">
+          <label class="control-label" for="first_name">{% trans %}First Name{% endtrans %}</label>
+          <div class="controls">
+            <input type="text" class="input-xlarge" name="first_name" id="first_name">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="last_name">{% trans %}Last Name{% endtrans %}</label>
+          <div class="controls">
+            <input type="text" class="input-xlarge" name="last_name" id="last_name">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="email">{% trans %}Email{% endtrans %}</label>
+          <div class="controls">
+            <input type="text" class="input-xlarge" name="email" id="email">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="username">{% trans %}Username{% endtrans %}</label>
+          <div class="controls">
+            <input type="text" class="input-xlarge" name="username" id="username" required>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="password">{% trans %}Password{% endtrans %}</label>
+          <div class="controls">
+            <input type="password" class="input-xlarge" name="password" id="password" required>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="confirm_password">{% trans %}Confirm password{% endtrans %}</label>
+          <div class="controls">
+            <input type="password" class="input-xlarge" name="confirm_password" id="confirm_password" required>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="controls">
+            <button type="submit" class="btn btn-primary btn-large">{% trans %}Register{% endtrans %}</button>
+            <button type="reset" class="btn btn-large">{% trans %}Reset{% endtrans %}</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>
+
+{% endblock body %}
