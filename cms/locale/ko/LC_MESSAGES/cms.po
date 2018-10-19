@@ -1096,5 +1096,8 @@ msgstr "비밀번호 확인"
 msgid "Register"
 msgstr "가입"
 
+msgid "Registration successful."
+msgstr "계정을 성공적으로 생성하였습니다."
+
 #~ msgid "All sources must be in the same language."
 #~ msgstr "모든 소스들은 동일한 프로그래밍 언어를 사용하여야 합니다."
