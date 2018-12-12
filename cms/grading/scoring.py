@@ -378,7 +378,7 @@ def _get_subtask_score_by_rank(scores, max_score, user_score):
 
 def _task_score_max_other_users(participation, task, public, only_tokened):
     user_score, partial, _A = _participation_get_subtask_scores(participation, task, public, only_tokened)
-    max_scores = {}
+    max_scores = None
     if user_score == None:
         return 0.0, partial
 
@@ -386,7 +386,9 @@ def _task_score_max_other_users(participation, task, public, only_tokened):
     for p_iter in participation.contest.participations:
         if p_iter.hidden:
             continue
-        subtask_scores, _A, max_scores = _participation_get_subtask_scores(p_iter, task)
+        subtask_scores, _A, _max_scores = _participation_get_subtask_scores(p_iter, task)
+        if max_scores == None:
+            max_scores = _max_scores
         if subtask_scores == None:
             continue
         for idx, score in iteritems(subtask_scores):
