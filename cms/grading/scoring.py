@@ -377,8 +377,7 @@ def _get_subtask_score_by_rank(scores, max_score, user_score):
     return max_score * (1.0 - rank / max(len(scores), 1.0))
 
 def _task_score_max_other_users(participation, task, public, only_tokened):
-    user_score, partial, _A = _participation_get_subtask_scores(participation, task, public, only_tokened)
-    max_scores = None
+    user_score, partial, max_scores = _participation_get_subtask_scores(participation, task)
     if user_score == None:
         return 0.0, partial
 
